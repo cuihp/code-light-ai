@@ -285,15 +285,19 @@ fn shell_command(hooks_dir: &std::path::Path, script: &str) -> String {
     }
 }
 
-fn local_hooks_dir() -> PathBuf {
+fn base_hooks_dir() -> PathBuf {
     dirs::home_dir()
         .unwrap_or_default()
         .join(".code-light")
         .join("hooks")
 }
 
+fn claude_local_hooks_dir() -> PathBuf {
+    base_hooks_dir().join("claude")
+}
+
 fn codex_local_hooks_dir() -> PathBuf {
-    local_hooks_dir().join("codex")
+    base_hooks_dir().join("codex")
 }
 
 fn copy_hooks_to_local(src: &std::path::Path, dest: &std::path::Path) {
@@ -322,16 +326,16 @@ fn setup_hooks() {
         serde_json::Value::Object(Default::default())
     };
 
-    let bundled_hooks = get_hooks_dir();
-    let hooks_path = local_hooks_dir();
-    copy_hooks_to_local(&bundled_hooks, &hooks_path);
+    let bundled_claude = get_hooks_dir().join("claude");
+    let claude_dest = claude_local_hooks_dir();
+    copy_hooks_to_local(&bundled_claude, &claude_dest);
 
     let hook_defs = serde_json::json!({
-        "PreToolUse": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&hooks_path, "pre-tool-use.sh") }] }],
-        "PostToolUse": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&hooks_path, "post-tool-use.sh") }] }],
-        "PostToolUseFailure": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&hooks_path, "post-tool-use-failure.sh") }] }],
-        "Notification": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&hooks_path, "notification.sh") }] }],
-        "Stop": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&hooks_path, "stop.sh") }] }],
+        "PreToolUse": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&claude_dest, "pre-tool-use.sh") }] }],
+        "PostToolUse": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&claude_dest, "post-tool-use.sh") }] }],
+        "PostToolUseFailure": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&claude_dest, "post-tool-use-failure.sh") }] }],
+        "Notification": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&claude_dest, "notification.sh") }] }],
+        "Stop": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&claude_dest, "stop.sh") }] }],
     });
 
     if let Some(hooks) = hook_defs.as_object() {

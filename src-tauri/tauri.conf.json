@@ -21,7 +21,7 @@
       "icons/icon.ico"
     ],
     "resources": [
-      "../hooks/*",
+      "../hooks/claude/*",
       "../hooks/codex/*"
     ],
     "macOS": {
