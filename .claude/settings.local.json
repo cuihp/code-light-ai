@@ -53,7 +53,12 @@
       "Bash(bash hooks/codex/session_start.sh)",
       "Bash(bash hooks/codex/permission_request.sh)",
       "Bash(bash hooks/codex/stop.sh)",
-      "Bash(python3 -c \"from PIL import Image; print\\('Pillow available'\\)\")"
+      "Bash(python3 -c \"from PIL import Image; print\\('Pillow available'\\)\")",
+      "Bash(mount)",
+      "Bash(hdiutil info *)",
+      "Bash(bash -x bundle_dmg.sh)",
+      "Bash(hdiutil create *)",
+      "Bash(bash *)"
     ]
   }
 }
