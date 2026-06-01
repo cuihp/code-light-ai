@@ -1,4 +1,4 @@
-# Code Light
+# Code Light AI
 
 [中文文档](./README_CN.md)
 
@@ -43,8 +43,8 @@ Zero network ports, zero APIs, zero configuration — just files on disk.
 ### Build from source
 
 ```bash
-git clone https://github.com/cuihuapeng/code-light.git
-cd code-light
+git clone https://github.com/cuihuapeng/code-light-ai.git
+cd code-light-ai
 pnpm install
 pnpm tauri build
 ```

@@ -1,4 +1,4 @@
-# Code Light
+# Code Light AI
 
 [English](./README.md)
 
@@ -43,8 +43,8 @@ Claude Code 事件 → 钩子脚本 → ~/.code-light/sessions/*.json → 托盘
 ### 从源码构建
 
 ```bash
-git clone https://github.com/cuihuapeng/code-light.git
-cd code-light
+git clone https://github.com/cuihuapeng/code-light-ai.git
+cd code-light-ai
 pnpm install
 pnpm tauri build
 ```
