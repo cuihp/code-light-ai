@@ -292,6 +292,10 @@ fn local_hooks_dir() -> PathBuf {
         .join("hooks")
 }
 
+fn codex_local_hooks_dir() -> PathBuf {
+    local_hooks_dir().join("codex")
+}
+
 fn copy_hooks_to_local(src: &std::path::Path, dest: &std::path::Path) {
     let _ = fs::create_dir_all(dest);
     if let Ok(entries) = fs::read_dir(src) {
@@ -352,6 +356,54 @@ fn setup_hooks() {
     let _ = fs::create_dir_all(sessions_dir());
 }
 
+fn setup_codex_hooks() {
+    let codex_dir = dirs::home_dir()
+        .unwrap_or_default()
+        .join(".codex");
+
+    let hooks_json_path = codex_dir.join("hooks.json");
+
+    let mut codex_config: serde_json::Value = if hooks_json_path.exists() {
+        let content = fs::read_to_string(&hooks_json_path).unwrap_or_default();
+        serde_json::from_str(&content).unwrap_or(serde_json::Value::Object(Default::default()))
+    } else {
+        serde_json::Value::Object(Default::default())
+    };
+
+    let bundled_codex = get_hooks_dir().join("codex");
+    let codex_dest = codex_local_hooks_dir();
+    copy_hooks_to_local(&bundled_codex, &codex_dest);
+
+    let hook_defs = serde_json::json!({
+        "SessionStart": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&codex_dest, "session_start.sh"), "statusMessage": "Code Light: Session tracking" }] }],
+        "PreToolUse": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&codex_dest, "pre_tool_use.sh"), "statusMessage": "Code Light: Tracking" }] }],
+        "PermissionRequest": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&codex_dest, "permission_request.sh"), "statusMessage": "Code Light: Waiting for approval" }] }],
+        "PostToolUse": [{ "matcher": "", "hooks": [{ "type": "command", "command": shell_command(&codex_dest, "post_tool_use.sh") }] }],
+        "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": shell_command(&codex_dest, "user_prompt_submit.sh") }] }],
+        "Stop": [{ "hooks": [{ "type": "command", "command": shell_command(&codex_dest, "stop.sh"), "timeout": 30 }] }],
+    });
+
+    let config_hooks = codex_config
+        .as_object_mut()
+        .unwrap()
+        .entry("hooks")
+        .or_insert_with(|| serde_json::Value::Object(Default::default()));
+
+    for (event, defs) in hook_defs.as_object().unwrap() {
+        config_hooks
+            .as_object_mut()
+            .unwrap()
+            .insert(event.clone(), defs.clone());
+    }
+
+    let _ = fs::create_dir_all(&codex_dir);
+    if let Ok(content) = serde_json::to_string_pretty(&codex_config) {
+        let _ = fs::write(&hooks_json_path, content);
+    }
+
+    let _ = fs::create_dir_all(sessions_dir());
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let icons = Arc::new(Mutex::new(build_icons()));
@@ -371,12 +423,15 @@ pub fn run() {
             let initial_icon = icons.lock().unwrap().get("idle").unwrap().clone();
 
             let status_item = MenuItemBuilder::with_id("status", "Idle").build(app)?;
-            let setup_item = MenuItemBuilder::with_id("setup", "Setup Hooks").build(app)?;
+            let setup_claude_item = MenuItemBuilder::with_id("setup_claude", "Setup Claude Hooks").build(app)?;
+            let setup_codex_item = MenuItemBuilder::with_id("setup_codex", "Setup Codex Hooks").build(app)?;
             let quit_item = MenuItemBuilder::with_id("quit", "Quit Code Light").build(app)?;
             let menu = MenuBuilder::new(app)
                 .item(&status_item)
                 .separator()
-                .item(&setup_item)
+                .item(&setup_claude_item)
+                .item(&setup_codex_item)
+                .separator()
                 .item(&quit_item)
                 .build()?;
 
@@ -388,10 +443,16 @@ pub fn run() {
                 .menu(&menu)
                 .tooltip("code-light: Idle")
                 .on_menu_event(|app, event| match event.id().as_ref() {
-                    "setup" => {
+                    "setup_claude" => {
                         setup_hooks();
                         if let Some(tray) = app.tray_by_id("main") {
-                            let _ = tray.set_tooltip(Some("code-light: Hooks configured!"));
+                            let _ = tray.set_tooltip(Some("code-light: Claude hooks configured!"));
+                        }
+                    }
+                    "setup_codex" => {
+                        setup_codex_hooks();
+                        if let Some(tray) = app.tray_by_id("main") {
+                            let _ = tray.set_tooltip(Some("code-light: Codex hooks configured!"));
                         }
                     }
                     "quit" => {

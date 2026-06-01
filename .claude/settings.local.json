@@ -47,7 +47,12 @@
       "Bash(curl -sL \"https://raw.githubusercontent.com/openai/codex/main/codex-rs/hooks/src/engine/command_runner.rs\")",
       "Bash(curl -sL \"https://raw.githubusercontent.com/openai/codex/main/codex-rs/hooks/src/engine/dispatcher.rs\")",
       "Bash(curl -sL \"https://api.github.com/repos/openai/codex/contents/codex-rs/hooks/src/events\")",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(chmod +x *)",
+      "Bash(cargo build *)",
+      "Bash(bash hooks/codex/session_start.sh)",
+      "Bash(bash hooks/codex/permission_request.sh)",
+      "Bash(bash hooks/codex/stop.sh)"
     ]
   }
 }

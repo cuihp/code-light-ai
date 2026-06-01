@@ -21,7 +21,8 @@
       "icons/icon.ico"
     ],
     "resources": [
-      "../hooks/*"
+      "../hooks/*",
+      "../hooks/codex/*"
     ],
     "macOS": {
       "infoPlist": "Info.plist"
