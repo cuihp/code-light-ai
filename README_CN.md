@@ -1,8 +1,16 @@
-# Code Light AI
+<div align="center">
+  <img src="./logo.png" alt="Code Light AI" width="120" />
 
-[English](./README.md)
+  # Code Light AI
 
-一个系统托盘状态指示灯，让你一眼就能看到 AI 编程助手正在做什么 —— 不需要一直盯着终端窗口。
+  AI 编程助手的系统托盘状态指示灯
+
+  [English](./README.md)
+
+  <img src="./preview.gif" alt="Preview" width="480" />
+</div>
+
+让你一眼就能看到 AI 编程助手正在做什么 —— 不需要一直盯着终端窗口。
 
 目前支持 **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** 和 **[OpenAI Codex CLI](https://github.com/openai/codex)**。
 

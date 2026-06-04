@@ -1,8 +1,16 @@
-# Code Light AI
+<div align="center">
+  <img src="./logo.png" alt="Code Light AI" width="120" />
 
-[中文文档](./README_CN.md)
+  # Code Light AI
 
-A system tray status light for AI coding agents. It shows a colored indicator in your system tray so you can tell at a glance what your AI agent is doing — without keeping the terminal visible.
+  A system tray status light for AI coding agents.
+
+  [中文文档](./README_CN.md)
+
+  <img src="./preview.gif" alt="Preview" width="480" />
+</div>
+
+It shows a colored indicator in your system tray so you can tell at a glance what your AI agent is doing — without keeping the terminal visible.
 
 Currently supports **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** and **[OpenAI Codex CLI](https://github.com/openai/codex)**.
 
