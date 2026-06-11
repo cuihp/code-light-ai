@@ -58,7 +58,8 @@
       "Bash(hdiutil info *)",
       "Bash(bash -x bundle_dmg.sh)",
       "Bash(hdiutil create *)",
-      "Bash(bash *)"
+      "Bash(bash *)",
+      "Bash(npm run *)"
     ]
   }
 }
