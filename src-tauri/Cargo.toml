@@ -1,6 +1,6 @@
 [package]
 name = "code-light"
-version = "0.1.1"
+version = "0.1.2"
 description = "A system tray status light for AI coding agents"
 authors = ["you"]
 edition = "2021"
