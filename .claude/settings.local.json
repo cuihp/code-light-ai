@@ -59,7 +59,23 @@
       "Bash(bash -x bundle_dmg.sh)",
       "Bash(hdiutil create *)",
       "Bash(bash *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(node *)",
+      "Bash(file /Users/cuihuapeng/Documents/trae_projects/code-light/public/pet/*.png)",
+      "Bash(screencapture -x /tmp/code-light-pet.png)",
+      "Bash(osascript *)",
+      "Bash(npx vite *)",
+      "Bash(screencapture -x /tmp/code-light-pet2.png)",
+      "Bash(log show *)",
+      "Bash(identify public/pet/idle.png)",
+      "Bash(python3 -c \"from PIL import Image; img=Image.open\\('public/pet/idle.png'\\); print\\(img.size, img.mode\\)\")",
+      "Bash(sips -g pixelWidth -g pixelHeight public/pet/idle.png)",
+      "Bash(kill 66307)",
+      "Bash(python3 *)",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs kill)",
+      "mcp__chrome-devtools__list_pages",
+      "Bash(pnpm --version)"
     ]
   }
 }

@@ -8,6 +8,7 @@ use tauri::{
     image::Image,
     menu::{MenuBuilder, MenuItemBuilder},
     tray::TrayIconBuilder,
+    Emitter, Manager,
 };
 
 const POLL_INTERVAL: Duration = Duration::from_secs(1);
@@ -243,19 +244,16 @@ fn cleanup_completed_sessions() {
 fn get_hooks_dir() -> PathBuf {
     if let Ok(exe) = std::env::current_exe() {
         if let Some(parent) = exe.parent() {
-            // Check exe-relative hooks/ (Windows NSIS, generic)
             let bundled = parent.join("hooks");
             if bundled.is_dir() {
                 return bundled;
             }
 
-            // Platform-specific resource paths
             let search_paths: &[&str] = if cfg!(target_os = "macos") {
                 &["../Resources/hooks", "../Resources/_up_/hooks"]
             } else if cfg!(target_os = "linux") {
                 &["../lib/code-light/hooks", "../resources/hooks"]
             } else {
-                // Windows
                 &["../resources/hooks"]
             };
 
@@ -408,6 +406,32 @@ fn setup_codex_hooks() {
     let _ = fs::create_dir_all(sessions_dir());
 }
 
+#[cfg(target_os = "macos")]
+fn make_window_transparent(window: &tauri::WebviewWindow) {
+    use objc::runtime::{Class, Object, NO};
+    use objc::{msg_send, sel, sel_impl};
+    if let Ok(ptr) = window.ns_window() {
+        unsafe {
+            let ns_window = ptr as *mut Object;
+            let clear: *mut Object =
+                msg_send![Class::get("NSColor").unwrap(), clearColor];
+            let _: () = msg_send![ns_window, setOpaque: NO];
+            let _: () = msg_send![ns_window, setBackgroundColor: clear];
+        }
+    }
+}
+
+#[tauri::command]
+fn get_current_state(state: tauri::State<'_, Arc<Mutex<AppState>>>) -> serde_json::Value {
+    let s = state.lock().unwrap();
+    serde_json::json!({
+        "state": s.state.key(),
+        "message": s.message,
+        "timestamp": s.timestamp,
+        "activeCount": s.active_count,
+    })
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let icons = Arc::new(Mutex::new(build_icons()));
@@ -423,6 +447,8 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .manage(app_state.clone())
+        .invoke_handler(tauri::generate_handler![get_current_state])
         .setup(move |app| {
             let initial_icon = icons.lock().unwrap().get("idle").unwrap().clone();
 
@@ -465,11 +491,15 @@ pub fn run() {
                     _ => {}
                 })
                 .on_tray_icon_event(|_tray, event| {
-                    // Right-click shows menu automatically on macOS
-                    // Left-click: do nothing special, menu is shown via right-click
                     let _ = event;
                 })
                 .build(app)?;
+
+            // Make pet window transparent on macOS
+            #[cfg(target_os = "macos")]
+            if let Some(window) = app.get_webview_window("pet") {
+                make_window_transparent(&window);
+            }
 
             // Poll thread
             let poll_app = app.handle().clone();
@@ -503,6 +533,14 @@ pub fn run() {
                         } else {
                             None
                         };
+
+                        let payload = serde_json::json!({
+                            "state": s.state.key(),
+                            "message": s.message,
+                            "timestamp": s.timestamp,
+                            "activeCount": s.active_count,
+                        });
+                        let _ = poll_app.emit("state-changed", payload);
                     } else if ts != s.timestamp || count != s.active_count {
                         s.message = message;
                         s.timestamp = ts;

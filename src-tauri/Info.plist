@@ -4,7 +4,5 @@
 <dict>
     <key>LSUIElement</key>
     <true/>
-    <key>LSBackgroundOnly</key>
-    <true/>
 </dict>
 </plist>

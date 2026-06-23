@@ -3,9 +3,30 @@
   "productName": "Code Light",
   "version": "0.1.1",
   "identifier": "com.cuihuapeng.code-light",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build"
+  },
   "app": {
     "withGlobalTauri": true,
-    "windows": [],
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "label": "pet",
+        "url": "index.html",
+        "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "acceptFirstMouse": true,
+        "skipTaskbar": true,
+        "width": 128,
+        "height": 128,
+        "resizable": false,
+        "visibleOnAllWorkspaces": true
+      }
+    ],
     "security": {
       "csp": null
     }
