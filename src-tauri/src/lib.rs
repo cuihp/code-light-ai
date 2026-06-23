@@ -452,12 +452,12 @@ pub fn run() {
         .setup(move |app| {
             let initial_icon = icons.lock().unwrap().get("idle").unwrap().clone();
 
-            let status_item = MenuItemBuilder::with_id("status", "Idle").build(app)?;
+            let toggle_pet_item = MenuItemBuilder::with_id("toggle_pet", "Hide Pet").build(app)?;
             let setup_claude_item = MenuItemBuilder::with_id("setup_claude", "Setup Claude Hooks").build(app)?;
             let setup_codex_item = MenuItemBuilder::with_id("setup_codex", "Setup Codex Hooks").build(app)?;
             let quit_item = MenuItemBuilder::with_id("quit", "Quit Code Light").build(app)?;
             let menu = MenuBuilder::new(app)
-                .item(&status_item)
+                .item(&toggle_pet_item)
                 .separator()
                 .item(&setup_claude_item)
                 .item(&setup_codex_item)
@@ -468,11 +468,26 @@ pub fn run() {
             #[cfg(target_os = "macos")]
             app.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
+            let toggle_item = toggle_pet_item.clone();
             let _tray = TrayIconBuilder::with_id("main")
                 .icon(initial_icon)
                 .menu(&menu)
                 .tooltip("code-light: Idle")
-                .on_menu_event(|app, event| match event.id().as_ref() {
+                .on_menu_event(move |app, event| match event.id().as_ref() {
+                    "toggle_pet" => {
+                        if let Some(window) = app.get_webview_window("pet") {
+                            if let Ok(visible) = window.is_visible() {
+                                if visible {
+                                    let _ = window.hide();
+                                    let _ = toggle_item.set_text("Show Pet");
+                                } else {
+                                    let _ = window.show();
+                                    let _ = window.set_focus();
+                                    let _ = toggle_item.set_text("Hide Pet");
+                                }
+                            }
+                        }
+                    }
                     "setup_claude" => {
                         setup_hooks();
                         if let Some(tray) = app.tray_by_id("main") {
