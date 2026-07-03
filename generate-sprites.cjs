@@ -110,7 +110,7 @@ const SWEAT = [120, 200, 255];
 function drawCat(frame, ox = 0, oy = 0, opts = {}) {
   const { closedEyes = false, bigEyes = false, happyMouth = false,
           raisedPaws = false, openMouth = false, earsBack = false,
-          tailUp = false, tailWag = 0 } = opts;
+          tailUp = false, tailWag = 0, xeyes = false } = opts;
 
   // Tail (drawn first, behind body)
   const tailBase = tailUp ? -4 : 0;
@@ -174,7 +174,20 @@ function drawCat(frame, ox = 0, oy = 0, opts = {}) {
   }
 
   // Eyes
-  if (closedEyes) {
+  if (xeyes) {
+    // X eyes (hurt/dizzy)
+    px(frame, 28+ox, 25+oy, ...EYE);
+    px(frame, 30+ox, 25+oy, ...EYE);
+    px(frame, 29+ox, 26+oy, ...EYE);
+    px(frame, 28+ox, 27+oy, ...EYE);
+    px(frame, 30+ox, 27+oy, ...EYE);
+
+    px(frame, 35+ox, 25+oy, ...EYE);
+    px(frame, 37+ox, 25+oy, ...EYE);
+    px(frame, 36+ox, 26+oy, ...EYE);
+    px(frame, 35+ox, 27+oy, ...EYE);
+    px(frame, 37+ox, 27+oy, ...EYE);
+  } else if (closedEyes) {
     // Closed eyes: horizontal lines (^_^)
     rect(frame, 27+ox, 26+oy, 3, 1, ...DARK);
     rect(frame, 34+ox, 26+oy, 3, 1, ...DARK);
@@ -484,6 +497,85 @@ function generateCompleted() {
   return frames;
 }
 
+// ==================== HURT: 6 frames ====================
+// Cat being whipped: X eyes, crying, shaking, pain stars, bump on head
+function generateHurt() {
+  const frames = [];
+  const TEAR = [100, 180, 255];
+  const PAIN = [255, 60, 50];
+  const BUMP = [255, 170, 170];
+
+  for (let i = 0; i < 6; i++) {
+    const f = createFrame();
+
+    // Body bounces: squish down, recoil up, squish, recoil
+    const bodyY = [4, -2, 3, -1, 2, 0][i];
+    const shakeX = [0, -3, 3, -2, 2, 0][i];
+
+    drawCat(f, shakeX, bodyY, {
+      xeyes: true,
+      openMouth: true,
+      earsBack: true,
+      tailUp: true,
+    });
+
+    // Make the mouth bigger for "OUCH!" scream
+    clearRect(f, 30+shakeX, 30+bodyY, 5, 5);
+    ellipse(f, 32+shakeX, 33+bodyY, 2, 3, ...EYE);
+    px(f, 32+shakeX, 31+bodyY, ...NOSE);
+
+    // Tears flying out from eyes
+    const tearDir = (i % 2 === 0) ? 1 : -1;
+    px(f, 25+shakeX, 24+bodyY, ...TEAR);
+    px(f, 24+shakeX+tearDir, 26+bodyY, ...TEAR);
+    px(f, 38+shakeX, 24+bodyY, ...TEAR);
+    px(f, 39+shakeX-tearDir, 26+bodyY, ...TEAR);
+
+    // Pain stars circling above head
+    const starPos = [
+      [[24, 11], [40, 13]],
+      [[26, 9], [38, 11]],
+      [[28, 8], [36, 8]],
+      [[30, 8], [34, 9]],
+      [[28, 10], [36, 10]],
+      [[26, 11], [38, 12]],
+    ];
+    for (const [sx, sy] of starPos[i]) {
+      px(f, sx+shakeX, sy+bodyY, 255, 220, 50);
+      px(f, sx+1+shakeX, sy+bodyY, 255, 220, 50);
+      px(f, sx+shakeX, sy+1+bodyY, 255, 220, 50);
+      px(f, sx+1+shakeX, sy+1+bodyY, 255, 220, 50);
+    }
+
+    // Impact mark on top of head (first 2 frames - fresh whip hit)
+    if (i < 2) {
+      px(f, 30+shakeX, 15+bodyY, ...PAIN);
+      px(f, 31+shakeX, 14+bodyY, ...PAIN);
+      px(f, 32+shakeX, 13+bodyY, ...PAIN);
+      px(f, 33+shakeX, 14+bodyY, ...PAIN);
+      px(f, 34+shakeX, 15+bodyY, ...PAIN);
+      px(f, 31+shakeX, 16+bodyY, ...PAIN);
+      px(f, 33+shakeX, 16+bodyY, ...PAIN);
+    }
+
+    // Bump on head (grows from frame 2 onwards)
+    if (i >= 2) {
+      const bumpH = i - 1;
+      for (let b = 0; b <= bumpH; b++) {
+        px(f, 32+shakeX, 16-b+bodyY, ...BUMP);
+        if (b > 0) {
+          px(f, 31+shakeX, 16-b+bodyY, ...BUMP);
+          px(f, 33+shakeX, 16-b+bodyY, ...BUMP);
+        }
+      }
+    }
+
+    frames.push(f);
+  }
+
+  return frames;
+}
+
 function drawStarShape(frame, cx, cy, r, g, b) {
   // Diamond star shape
   px(frame, cx, cy - 2, r, g, b);
@@ -509,6 +601,7 @@ const sheets = [
   { name: 'waiting', gen: generateWaiting },
   { name: 'error', gen: generateError },
   { name: 'completed', gen: generateCompleted },
+  { name: 'hurt', gen: generateHurt },
 ];
 
 for (const { name, gen } of sheets) {

@@ -10,6 +10,7 @@ use tauri::{
     tray::TrayIconBuilder,
     Emitter, Manager,
 };
+use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 
 const POLL_INTERVAL: Duration = Duration::from_secs(1);
 const BLINK_INTERVAL: Duration = Duration::from_millis(500);
@@ -447,17 +448,20 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .manage(app_state.clone())
         .invoke_handler(tauri::generate_handler![get_current_state])
         .setup(move |app| {
             let initial_icon = icons.lock().unwrap().get("idle").unwrap().clone();
 
             let toggle_pet_item = MenuItemBuilder::with_id("toggle_pet", "Hide Pet").build(app)?;
+            let whip_item = MenuItemBuilder::with_id("whip", "Whip").build(app)?;
             let setup_claude_item = MenuItemBuilder::with_id("setup_claude", "Setup Claude Hooks").build(app)?;
             let setup_codex_item = MenuItemBuilder::with_id("setup_codex", "Setup Codex Hooks").build(app)?;
             let quit_item = MenuItemBuilder::with_id("quit", "Quit Code Light").build(app)?;
             let menu = MenuBuilder::new(app)
                 .item(&toggle_pet_item)
+                .item(&whip_item)
                 .separator()
                 .item(&setup_claude_item)
                 .item(&setup_codex_item)
@@ -488,6 +492,9 @@ pub fn run() {
                             }
                         }
                     }
+                    "whip" => {
+                        let _ = app.emit("whip", ());
+                    }
                     "setup_claude" => {
                         setup_hooks();
                         if let Some(tray) = app.tray_by_id("main") {
@@ -515,6 +522,14 @@ pub fn run() {
             if let Some(window) = app.get_webview_window("pet") {
                 make_window_transparent(&window);
             }
+
+            // Register global shortcut: Cmd+B (macOS) / Ctrl+B (others) → whip
+            let shortcut_app = app.handle().clone();
+            app.global_shortcut().on_shortcut("CmdOrCtrl+B", move |_app, _shortcut, event| {
+                if event.state == ShortcutState::Pressed {
+                    let _ = shortcut_app.emit("whip", ());
+                }
+            }).ok();
 
             // Poll thread
             let poll_app = app.handle().clone();
