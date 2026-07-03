@@ -576,6 +576,206 @@ function generateHurt() {
   return frames;
 }
 
+// ==================== STICK: 6 frames ====================
+// Cat hit by a stick: X eyes, spinning, stars, flattened
+function generateStick() {
+  const frames = [];
+  const STAR_Y = [255, 220, 50];
+
+  for (let i = 0; i < 6; i++) {
+    const f = createFrame();
+    const bodyY = [0, -3, 5, 2, -1, 0][i];
+    const shakeX = [0, 2, -3, 2, -1, 0][i];
+    const squish = [0, -1, 2, 1, 0, 0][i];
+
+    drawCat(f, shakeX, bodyY + squish, {
+      xeyes: true,
+      openMouth: true,
+      earsBack: true,
+    });
+
+    // Spinning stars around head
+    const angle = (i / 6) * Math.PI * 2;
+    for (let s = 0; s < 3; s++) {
+      const a = angle + (s * Math.PI * 2 / 3);
+      const sx = Math.round(32 + Math.cos(a) * 12);
+      const sy = Math.round(12 + Math.sin(a) * 4);
+      px(f, sx, sy, ...STAR_Y);
+      px(f, sx+1, sy, ...STAR_Y);
+      px(f, sx, sy+1, ...STAR_Y);
+    }
+
+    // Impact lines on sides
+    if (i < 3) {
+      for (let j = 0; j < 3; j++) {
+        px(f, 8 + j, 24 + j*3, 255, 200, 50);
+        px(f, 53 - j, 24 + j*3, 255, 200, 50);
+      }
+    }
+
+    frames.push(f);
+  }
+  return frames;
+}
+
+// ==================== CAR: 6 frames ====================
+// Cat hit by a car: flattened, tire marks, spinning
+function generateCar() {
+  const frames = [];
+  const SMOKE = [120, 120, 120];
+
+  for (let i = 0; i < 6; i++) {
+    const f = createFrame();
+    const flat = [0, 2, 8, 6, 4, 2][i];
+    const slideX = [0, 4, 8, 4, -2, 0][i];
+
+    drawCat(f, slideX, flat, {
+      xeyes: true,
+      openMouth: true,
+      earsBack: true,
+    });
+
+    // Tire marks behind cat
+    if (i >= 1) {
+      for (let t = 0; t < i * 2; t++) {
+        px(f, 4 + t * 3, 50, 40, 40, 40);
+        px(f, 4 + t * 3, 51, 40, 40, 40);
+        px(f, 4 + t * 3, 52, 40, 40, 40);
+      }
+    }
+
+    // Smoke/dust puffs
+    if (i >= 2) {
+      const sp = i - 2;
+      ellipse(f, 10 + sp*3, 30, 3, 3, ...SMOKE, 180);
+      ellipse(f, 48 + sp*2, 35, 2, 2, ...SMOKE, 150);
+    }
+
+    // Speed lines
+    if (i < 3) {
+      for (let l = 0; l < 3; l++) {
+        px(f, 2, 20 + l * 8, 200, 200, 200, 150);
+        px(f, 3, 20 + l * 8, 200, 200, 200, 150);
+      }
+    }
+
+    frames.push(f);
+  }
+  return frames;
+}
+
+// ==================== WATER: 6 frames ====================
+// Cat splashed with water: soaking wet, dripping, shocked
+function generateWater() {
+  const frames = [];
+  const WATER = [80, 150, 255];
+  const DROP = [100, 180, 255];
+
+  for (let i = 0; i < 6; i++) {
+    const f = createFrame();
+    const shakeX = [0, -1, 1, -1, 1, 0][i];
+    const bodyY = [0, 1, -1, 0, 0, 0][i];
+
+    drawCat(f, shakeX, bodyY, {
+      bigEyes: true,
+      openMouth: true,
+      earsBack: true,
+    });
+
+    // Water splashing from top
+    if (i < 3) {
+      for (let w = 0; w < 5; w++) {
+        const wx = 20 + w * 6;
+        const wy = 8 + ((i + w) % 3) * 3;
+        ellipse(f, wx, wy, 2, 2, ...WATER, 200);
+      }
+    }
+
+    // Water drips from body
+    const dripY = [0, 2, 4, 6, 8, 10][i];
+    px(f, 22+shakeX, 42+dripY, ...DROP);
+    px(f, 42+shakeX, 40+dripY, ...DROP);
+    if (i >= 2) px(f, 32+shakeX, 48+dripY-2, ...DROP);
+
+    // Wet fur (darker patches)
+    if (i >= 2) {
+      rect(f, 26+shakeX, 36+bodyY, 3, 2, 180, 120, 70, 150);
+      rect(f, 36+shakeX, 38+bodyY, 3, 2, 180, 120, 70, 150);
+    }
+
+    // Puddle growing at bottom
+    if (i >= 1) {
+      const puddleW = 4 + i * 3;
+      ellipse(f, 32, 56, puddleW, 2, ...WATER, 120);
+    }
+
+    frames.push(f);
+  }
+  return frames;
+}
+
+// ==================== EGG: 6 frames ====================
+// Cat hit by eggs: yolk on head, shell fragments, dripping
+function generateEgg() {
+  const frames = [];
+  const YOLK = [255, 200, 50];
+  const WHITE_E = [255, 250, 230];
+  const SHELL = [250, 245, 220];
+
+  for (let i = 0; i < 6; i++) {
+    const f = createFrame();
+    const shakeX = [0, -2, 2, -1, 1, 0][i];
+
+    drawCat(f, shakeX, 0, {
+      xeyes: (i >= 1),
+      openMouth: (i >= 1),
+      earsBack: (i >= 1),
+      closedEyes: (i === 0),
+    });
+
+    // Egg yolk splat on head (grows)
+    if (i >= 1) {
+      const ySize = 1 + Math.min(i, 3);
+      ellipse(f, 30+shakeX, 14, ySize+1, ySize, ...YOLK);
+      // Dripping yolk
+      if (i >= 2) {
+        px(f, 30+shakeX, 14+ySize, ...YOLK);
+        px(f, 30+shakeX, 15+ySize, ...YOLK);
+      }
+    }
+
+    // Egg white splatter
+    if (i >= 1) {
+      ellipse(f, 34+shakeX, 16, 3, 2, ...WHITE_E, 200);
+      px(f, 28+shakeX, 12, ...WHITE_E);
+      px(f, 36+shakeX, 18, ...WHITE_E);
+    }
+
+    // Shell fragments flying (first 3 frames)
+    if (i < 3) {
+      const frag = [
+        [[20, 10], [44, 8], [18, 16]],
+        [[22, 8], [42, 10], [46, 14]],
+        [[24, 8], [40, 8]],
+      ];
+      for (const [fx, fy] of frag[i]) {
+        px(f, fx+shakeX, fy, ...SHELL);
+        px(f, fx+1+shakeX, fy, ...SHELL);
+      }
+    }
+
+    // Drips going down face
+    if (i >= 3) {
+      const dripY = i - 3;
+      px(f, 30+shakeX, 20+dripY, ...YOLK);
+      px(f, 33+shakeX, 22+dripY, ...YOLK);
+    }
+
+    frames.push(f);
+  }
+  return frames;
+}
+
 function drawStarShape(frame, cx, cy, r, g, b) {
   // Diamond star shape
   px(frame, cx, cy - 2, r, g, b);
@@ -602,6 +802,10 @@ const sheets = [
   { name: 'error', gen: generateError },
   { name: 'completed', gen: generateCompleted },
   { name: 'hurt', gen: generateHurt },
+  { name: 'stick', gen: generateStick },
+  { name: 'car', gen: generateCar },
+  { name: 'water', gen: generateWater },
+  { name: 'egg', gen: generateEgg },
 ];
 
 for (const { name, gen } of sheets) {

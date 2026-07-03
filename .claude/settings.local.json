@@ -75,7 +75,8 @@
       "Bash(awk '{print $2}')",
       "Bash(xargs kill)",
       "mcp__chrome-devtools__list_pages",
-      "Bash(pnpm --version)"
+      "Bash(pnpm --version)",
+      "Bash(pkill -f \"code-light\")"
     ]
   }
 }

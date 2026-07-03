@@ -455,7 +455,7 @@ pub fn run() {
             let initial_icon = icons.lock().unwrap().get("idle").unwrap().clone();
 
             let toggle_pet_item = MenuItemBuilder::with_id("toggle_pet", "Hide Pet").build(app)?;
-            let whip_item = MenuItemBuilder::with_id("whip", "Whip").build(app)?;
+            let whip_item = MenuItemBuilder::with_id("whip", "Whip  \u{2318}B").build(app)?;
             let setup_claude_item = MenuItemBuilder::with_id("setup_claude", "Setup Claude Hooks").build(app)?;
             let setup_codex_item = MenuItemBuilder::with_id("setup_codex", "Setup Codex Hooks").build(app)?;
             let quit_item = MenuItemBuilder::with_id("quit", "Quit Code Light").build(app)?;

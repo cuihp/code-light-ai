@@ -10,10 +10,62 @@
     <div id="pet-wrapper" >
       <div id="pet-sprite" class="pet-sprite state-idle"></div>
       <div id="whip-overlay">
-        <div class="whip-strand"></div>
+        <svg id="whip-svg" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="whip-grad" gradientUnits="userSpaceOnUse" x1="106" y1="16" x2="58" y2="40">
+              <stop offset="0%" stop-color="#3D1F08"/>
+              <stop offset="15%" stop-color="#5C2A0E"/>
+              <stop offset="40%" stop-color="#7A3812"/>
+              <stop offset="70%" stop-color="#A0522D"/>
+              <stop offset="100%" stop-color="#C9803B"/>
+            </linearGradient>
+            <radialGradient id="flash-grad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+              <stop offset="25%" stop-color="#FFD700" stop-opacity="0.9"/>
+              <stop offset="55%" stop-color="#FF8C00" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#FF4500" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <path id="whip-path" fill="url(#whip-grad)" stroke="#2A1505" stroke-width="0.3" opacity="0"/>
+          <circle id="whip-flash" cx="0" cy="0" r="0" fill="url(#flash-grad)" opacity="0"/>
+        </svg>
         <div class="whip-impact">
           <div class="impact-burst"></div>
           <span class="impact-text">SMACK!</span>
+        </div>
+      </div>
+      <div id="stick-overlay">
+        <div class="stick-weapon"></div>
+        <div class="stick-impact">
+          <div class="impact-burst"></div>
+          <span class="impact-text">BONK!</span>
+        </div>
+      </div>
+      <div id="car-overlay">
+        <div class="car-vehicle">
+          <div class="car-body"></div>
+          <div class="car-roof"></div>
+          <div class="car-window"></div>
+          <div class="car-wheel car-wheel-front"></div>
+          <div class="car-wheel car-wheel-back"></div>
+        </div>
+        <div class="car-impact">
+          <div class="impact-burst"></div>
+          <span class="impact-text">CRASH!</span>
+        </div>
+      </div>
+      <div id="water-overlay">
+        <div class="water-stream"></div>
+        <div class="water-impact">
+          <div class="impact-burst impact-burst-blue"></div>
+          <span class="impact-text impact-text-blue">SPLASH!</span>
+        </div>
+      </div>
+      <div id="egg-overlay">
+        <div class="egg-projectile"></div>
+        <div class="egg-impact">
+          <div class="impact-burst impact-burst-yellow"></div>
+          <span class="impact-text impact-text-yellow">SPLAT!</span>
         </div>
       </div>
     </div>

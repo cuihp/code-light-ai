@@ -1,7 +1,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: rgba(0, 0, 0, 0.01);
+  background: transparent;
   overflow: hidden;
   width: 100%;
   height: 100%;
@@ -107,6 +107,34 @@ html, body {
   to { background-position: -384px 0; }
 }
 
+/* Stick: 6 frames, 384x64, 0.35s */
+.pet-sprite.state-stick {
+  background-image: url('/pet/stick.png');
+  background-size: 384px 64px;
+  animation: sprite-hurt 0.35s steps(6) infinite;
+}
+
+/* Car: 6 frames, 384x64, 0.35s */
+.pet-sprite.state-car {
+  background-image: url('/pet/car.png');
+  background-size: 384px 64px;
+  animation: sprite-hurt 0.35s steps(6) infinite;
+}
+
+/* Water: 6 frames, 384x64, 0.35s */
+.pet-sprite.state-water {
+  background-image: url('/pet/water.png');
+  background-size: 384px 64px;
+  animation: sprite-hurt 0.35s steps(6) infinite;
+}
+
+/* Egg: 6 frames, 384x64, 0.35s */
+.pet-sprite.state-egg {
+  background-image: url('/pet/egg.png');
+  background-size: 384px 64px;
+  animation: sprite-hurt 0.35s steps(6) infinite;
+}
+
 /* ===== Whip overlay ===== */
 #whip-overlay {
   position: absolute;
@@ -115,62 +143,12 @@ html, body {
   z-index: 100;
 }
 
-/* Whip strand: swings from top-right toward center */
-.whip-strand {
+#whip-svg {
   position: absolute;
-  top: 8px;
-  right: 28px;
-  width: 5px;
-  height: 55px;
-  background: linear-gradient(to bottom, #6B3410 0%, #8B4513 30%, #A0522D 70%, #C9803B 100%);
-  transform-origin: top center;
-  transform: rotate(30deg) scaleY(0);
-  opacity: 0;
-  border-radius: 3px;
-  box-shadow: 1px 0 1px rgba(0,0,0,0.4);
-}
-
-/* Whip handle */
-.whip-strand::before {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -3px;
-  width: 11px;
-  height: 7px;
-  background: #4A2510;
-  border-radius: 4px;
-}
-
-.whip-strand.striking {
-  animation: whip-swing 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-@keyframes whip-swing {
-  0% {
-    transform: rotate(30deg) scaleY(0);
-    opacity: 0;
-  }
-  15% {
-    transform: rotate(30deg) scaleY(0.5);
-    opacity: 1;
-  }
-  40% {
-    transform: rotate(-35deg) scaleY(1);
-    opacity: 1;
-  }
-  50% {
-    transform: rotate(-40deg) scaleY(1);
-    opacity: 1;
-  }
-  70% {
-    transform: rotate(-15deg) scaleY(0.9);
-    opacity: 1;
-  }
-  100% {
-    transform: rotate(25deg) scaleY(0);
-    opacity: 0;
-  }
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 /* Impact effect at center */
@@ -184,7 +162,7 @@ html, body {
 }
 
 .whip-impact.striking {
-  animation: impact-flash 0.4s ease-out 0.18s;
+  animation: impact-flash 0.5s ease-out;
 }
 
 @keyframes impact-flash {
@@ -254,4 +232,359 @@ html, body {
     0 0 4px rgba(255,200,0,0.8);
   white-space: nowrap;
   font-family: sans-serif;
+}
+
+/* ===== Stick overlay ===== */
+#stick-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: visible;
+}
+
+.stick-weapon {
+  position: absolute;
+  top: -10px;
+  right: -20px;
+  width: 8px;
+  height: 70px;
+  background: linear-gradient(to bottom, #8B4513, #A0522D 30%, #6B3410 70%, #4A2208);
+  border-radius: 4px;
+  border: 1px solid #3D1F08;
+  transform-origin: 50% 0%;
+  transform: rotate(-160deg) scale(0);
+  opacity: 0;
+  box-shadow: 2px 0 3px rgba(0,0,0,0.3);
+}
+
+.stick-weapon.striking {
+  animation: stick-swing 0.6s ease-out;
+}
+
+@keyframes stick-swing {
+  0% {
+    transform: rotate(-160deg) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    transform: rotate(-140deg) scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: rotate(-30deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(10deg) scale(1);
+    opacity: 1;
+  }
+  60% {
+    transform: rotate(-20deg) scale(1);
+    opacity: 0.9;
+  }
+  80% {
+    transform: rotate(-80deg) scale(0.9);
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(-160deg) scale(0.7);
+    opacity: 0;
+  }
+}
+
+.stick-impact {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stick-impact.striking {
+  animation: impact-flash 0.5s ease-out;
+}
+
+/* ===== Car overlay ===== */
+#car-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: visible;
+}
+
+.car-vehicle {
+  position: absolute;
+  top: 55%;
+  left: -80px;
+  width: 50px;
+  height: 28px;
+  opacity: 0;
+}
+
+.car-vehicle.striking {
+  animation: car-drive 0.7s ease-in;
+}
+
+@keyframes car-drive {
+  0% {
+    left: -80px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  45% {
+    left: 20%;
+    opacity: 1;
+  }
+  55% {
+    left: 20%;
+    opacity: 1;
+  }
+  90% {
+    left: 110%;
+    opacity: 1;
+  }
+  100% {
+    left: 110%;
+    opacity: 0;
+  }
+}
+
+.car-body {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  width: 50px;
+  height: 12px;
+  background: linear-gradient(to bottom, #E83828, #B81E0E);
+  border-radius: 4px 6px 3px 3px;
+  border: 1px solid #8B0000;
+}
+
+.car-roof {
+  position: absolute;
+  bottom: 16px;
+  left: 10px;
+  width: 28px;
+  height: 10px;
+  background: linear-gradient(to bottom, #E83828, #C0201A);
+  border-radius: 6px 8px 0 0;
+  border: 1px solid #8B0000;
+  border-bottom: none;
+}
+
+.car-window {
+  position: absolute;
+  bottom: 17px;
+  left: 12px;
+  width: 24px;
+  height: 7px;
+  background: linear-gradient(to bottom, #87CEEB, #4682B4);
+  border-radius: 4px 5px 0 0;
+}
+
+.car-wheel {
+  position: absolute;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, #444 30%, #1a1a1a 60%, #333 100%);
+  border-radius: 50%;
+  border: 1px solid #000;
+}
+
+.car-wheel-front {
+  left: 36px;
+}
+
+.car-wheel-back {
+  left: 4px;
+}
+
+.car-impact {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.car-impact.striking {
+  animation: impact-flash 0.5s ease-out;
+}
+
+/* ===== Water overlay ===== */
+#water-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: visible;
+}
+
+.water-stream {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  width: 24px;
+  height: 80px;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: 50% 0%;
+  opacity: 0;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(80,150,255,0.3) 15%,
+    rgba(100,180,255,0.6) 40%,
+    rgba(80,150,255,0.8) 70%,
+    rgba(60,130,220,0.9) 100%);
+  border-radius: 12px 12px 6px 6px;
+  filter: blur(0.5px);
+}
+
+.water-stream.striking {
+  animation: water-pour 0.6s ease-out;
+}
+
+@keyframes water-pour {
+  0% {
+    transform: translateX(-50%) scaleY(0);
+    opacity: 0;
+  }
+  20% {
+    transform: translateX(-50%) scaleY(1);
+    opacity: 1;
+  }
+  60% {
+    transform: translateX(-50%) scaleY(1.1);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(-50%) scaleY(0.8) translateY(10px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(-50%) scaleY(0.3) translateY(20px);
+    opacity: 0;
+  }
+}
+
+.water-impact {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.water-impact.striking {
+  animation: impact-flash 0.5s ease-out;
+}
+
+.impact-burst-blue {
+  background: radial-gradient(circle, rgba(100,180,255,0.9) 0%, rgba(50,120,220,0.7) 40%, rgba(30,80,180,0.3) 70%, transparent 100%);
+}
+
+.impact-text-blue {
+  color: #2060C0;
+  text-shadow:
+    1px 1px 0 #fff,
+    -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+    0 0 4px rgba(100,180,255,0.8);
+}
+
+/* ===== Egg overlay ===== */
+#egg-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: visible;
+}
+
+.egg-projectile {
+  position: absolute;
+  top: 20%;
+  left: -20px;
+  width: 14px;
+  height: 18px;
+  background: linear-gradient(to bottom, #FFF8E7, #F0E68C 60%, #DDD060);
+  border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+  border: 1px solid #C0A030;
+  opacity: 0;
+  box-shadow: inset -2px -3px 4px rgba(180,150,40,0.3);
+}
+
+.egg-projectile.striking {
+  animation: egg-fly 0.5s ease-in;
+}
+
+@keyframes egg-fly {
+  0% {
+    left: -20px;
+    top: 10%;
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  60% {
+    left: 45%;
+    top: 35%;
+    transform: rotate(360deg);
+    opacity: 1;
+  }
+  70% {
+    left: 50%;
+    top: 40%;
+    transform: rotate(450deg) scale(1.2, 0.8);
+    opacity: 1;
+  }
+  80% {
+    left: 50%;
+    top: 40%;
+    transform: rotate(450deg) scale(0.1, 0.1);
+    opacity: 0.8;
+  }
+  100% {
+    left: 50%;
+    top: 40%;
+    transform: rotate(450deg) scale(0, 0);
+    opacity: 0;
+  }
+}
+
+.egg-impact {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.egg-impact.striking {
+  animation: impact-flash 0.5s ease-out;
+}
+
+.impact-burst-yellow {
+  background: radial-gradient(circle, rgba(255,220,80,0.9) 0%, rgba(255,200,50,0.7) 40%, rgba(220,180,30,0.3) 70%, transparent 100%);
+}
+
+.impact-text-yellow {
+  color: #B8860B;
+  text-shadow:
+    1px 1px 0 #fff,
+    -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+    0 0 4px rgba(255,220,50,0.8);
 }
