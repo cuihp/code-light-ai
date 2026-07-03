@@ -143,11 +143,20 @@ function drawCat(frame, ox = 0, oy = 0, opts = {}) {
 
   // Ears
   if (earsBack) {
-    // Ears flattened (sideways)
-    rect(frame, 21+ox, 20+oy, 3, 2, ...DARK);
-    rect(frame, 22+ox, 20+oy, 2, 1, ...EAR_IN);
-    rect(frame, 40+ox, 20+oy, 3, 2, ...DARK);
-    rect(frame, 41+ox, 20+oy, 2, 1, ...EAR_IN);
+    // Ears flattened back but still visible
+    px(frame, 22+ox, 19+oy, ...DARK);
+    px(frame, 23+ox, 18+oy, ...DARK);
+    px(frame, 24+ox, 18+oy, ...BODY);
+    px(frame, 23+ox, 19+oy, ...EAR_IN);
+    px(frame, 24+ox, 19+oy, ...BODY);
+    px(frame, 25+ox, 19+oy, ...BODY);
+
+    px(frame, 39+ox, 18+oy, ...BODY);
+    px(frame, 40+ox, 18+oy, ...DARK);
+    px(frame, 41+ox, 19+oy, ...DARK);
+    px(frame, 38+ox, 19+oy, ...BODY);
+    px(frame, 39+ox, 19+oy, ...EAR_IN);
+    px(frame, 40+ox, 19+oy, ...BODY);
   } else {
     // Left ear (triangle pointing up)
     px(frame, 22+ox, 20+oy, ...DARK);
@@ -520,8 +529,8 @@ function generateHurt() {
     });
 
     // Make the mouth bigger for "OUCH!" scream
-    clearRect(f, 30+shakeX, 30+bodyY, 5, 5);
-    ellipse(f, 32+shakeX, 33+bodyY, 2, 3, ...EYE);
+    clearRect(f, 31+shakeX, 31+bodyY, 3, 3);
+    ellipse(f, 32+shakeX, 32+bodyY, 1, 2, ...EYE);
     px(f, 32+shakeX, 31+bodyY, ...NOSE);
 
     // Tears flying out from eyes

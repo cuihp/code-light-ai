@@ -54,6 +54,12 @@ function clearAllEffects() {
   });
 }
 
+/** Map beat type to the sprite state name used in CSS */
+function beatSpriteState(beatType: BeatType): string {
+  // whip uses the "hurt" sprite; others have their own sprite sheets
+  return beatType === "whip" ? "hurt" : beatType;
+}
+
 /** Enter hurt mode: save pending state (only on first entry), set pet sprite */
 function startHurt(beatType: BeatType) {
   const pet = document.getElementById("pet-sprite");
@@ -66,7 +72,7 @@ function startHurt(beatType: BeatType) {
   }
 
   isHurting = true;
-  pet.className = `pet-sprite state-${beatType}`;
+  pet.className = `pet-sprite state-${beatSpriteState(beatType)}`;
 
   if (hurtTimeoutId !== null) {
     clearTimeout(hurtTimeoutId);
