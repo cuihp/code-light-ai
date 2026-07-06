@@ -3,14 +3,14 @@
 
   # Code Light AI
 
-  AI 编程助手的系统托盘状态指示灯
+  AI 编程助手的系统托盘状态指示灯，附带桌面宠物伴侣
 
   [English](./README.md)
 
   <img src="./preview.gif" alt="Preview" width="480" />
 </div>
 
-让你一眼就能看到 AI 编程助手正在做什么 —— 不需要一直盯着终端窗口。
+让你一眼就能看到 AI 编程助手正在做什么 —— 不需要一直盯着终端窗口。还有一只可爱的像素猫咪宠物，会根据 Agent 的状态做出反应！
 
 目前支持 **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** 和 **[OpenAI Codex CLI](https://github.com/openai/codex)**。
 
@@ -25,6 +25,22 @@
 | 蓝色 | 已完成 | 任务完成（显示 10 秒后自动回到空闲状态） |
 
 活跃状态（工作 / 等待 / 出错）每 500ms 闪烁一次，提醒你注意。托盘图标的提示文字会显示当前状态、活跃会话数和最后更新时间。
+
+## 桌面宠物 🐱
+
+Code Light 现在附带一只像素艺术风格的桌面宠物，会根据 AI Agent 的状态做出反应！这只猫咪伴侣会坐在你的桌面上，根据 Agent 的工作状态播放不同动画。
+
+| 状态 | 动画 |
+|:---:|---|
+| 空闲 | 放松地坐着 |
+| 工作中 | 精力充沛地打字 |
+| 等待确认 | 警觉地四处张望 |
+| 出错 | 受惊，耳朵向后 |
+| 已完成 | 开心地庆祝 |
+
+**切换宠物显示：** 右键点击托盘图标，选择 **"Show Pet"**（显示宠物）或 **"Hide Pet"**（隐藏宠物）来控制宠物的可见性。
+
+宠物窗口始终置顶且可拖拽，你可以将它放在屏幕上的任何位置。
 
 ## 工作原理
 
@@ -134,13 +150,20 @@ code-light/
 │       ├── post_tool_use.sh         # → 工作中
 │       ├── user_prompt_submit.sh    # → 工作中
 │       └── stop.sh                  # → 已完成
+├── public/pet/                      # 桌面宠物精灵图
+│   ├── idle.png                     # 空闲动画
+│   ├── working.png                  # 工作中动画
+│   ├── waiting.png                  # 等待确认动画
+│   ├── error.png                    # 出错动画
+│   └── completed.png                # 已完成动画
 ├── src-tauri/                       # Tauri v2 / Rust 后端
 │   ├── src/
 │   │   ├── main.rs                  # 入口
-│   │   └── lib.rs                   # 托盘图标、轮询、闪烁、钩子注册
+│   │   └── lib.rs                   # 托盘图标、轮询、闪烁、钩子注册、宠物窗口
 │   ├── icons/status/                # 状态指示灯图标（灰、绿、黄、红、蓝）
 │   └── tauri.conf.json              # Tauri 配置
 ├── src/                             # 前端（无可见窗口，仅占位）
+├── generate-sprites.cjs             # 桌面宠物精灵图生成脚本
 ├── package.json
 └── vite.config.ts
 ```
@@ -162,6 +185,7 @@ code-light/
 - **后端：** [Tauri v2](https://v2.tauri.app/) + Rust
 - **前端：** Vite + TypeScript（最小化 —— 应用没有可见窗口）
 - **钩子：** Bash 脚本，注册为生命周期钩子
+- **桌面宠物：** 使用 Node.js canvas 生成像素艺术精灵图
 
 ## 许可证
 

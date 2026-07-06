@@ -3,14 +3,14 @@
 
   # Code Light AI
 
-  A system tray status light for AI coding agents.
+  A system tray status light for AI coding agents, with a desktop pet companion.
 
   [中文文档](./README_CN.md)
 
   <img src="./preview.gif" alt="Preview" width="480" />
 </div>
 
-It shows a colored indicator in your system tray so you can tell at a glance what your AI agent is doing — without keeping the terminal visible.
+It shows a colored indicator in your system tray so you can tell at a glance what your AI agent is doing — without keeping the terminal visible. Plus, an adorable pixel cat pet that reacts to your agent's status!
 
 Currently supports **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** and **[OpenAI Codex CLI](https://github.com/openai/codex)**.
 
@@ -25,6 +25,22 @@ Currently supports **[Claude Code](https://docs.anthropic.com/en/docs/claude-cod
 | Blue | Completed | Task finished (displays for 10 seconds, then returns to idle) |
 
 Active states blink every 500ms to catch your attention. The tray tooltip shows the current state, active session count, and last update time.
+
+## Desktop Pet 🐱
+
+Code Light now includes a pixel art desktop pet that reacts to your AI agent's status! The cat companion sits on your desktop and animates based on what your agent is doing.
+
+| State | Animation |
+|:---:|---|
+| Idle | Relaxed, sitting calmly |
+| Working | Energetic, typing away |
+| Waiting | Alert, looking around |
+| Error | Startled, ears back |
+| Completed | Happy, celebrating |
+
+**Toggle the pet:** Right-click the tray icon and select **"Show Pet"** or **"Hide Pet"** to control visibility.
+
+The pet window is always on top and draggable, so you can position it anywhere on your screen.
 
 ## How It Works
 
@@ -134,13 +150,20 @@ code-light/
 │       ├── post_tool_use.sh         # → working
 │       ├── user_prompt_submit.sh    # → working
 │       └── stop.sh                  # → completed
+├── public/pet/                      # Desktop pet sprite sheets
+│   ├── idle.png                     # Idle animation
+│   ├── working.png                  # Working animation
+│   ├── waiting.png                  # Waiting animation
+│   ├── error.png                    # Error animation
+│   └── completed.png                # Completed animation
 ├── src-tauri/                       # Tauri v2 / Rust backend
 │   ├── src/
 │   │   ├── main.rs                  # Entry point
-│   │   └── lib.rs                   # Tray icon, polling, blink, hook setup
+│   │   └── lib.rs                   # Tray icon, polling, blink, hook setup, pet window
 │   ├── icons/status/                # Status indicator PNGs (gray, green, yellow, red, blue)
 │   └── tauri.conf.json              # Tauri configuration
 ├── src/                             # Frontend (vestigial — no visible window)
+├── generate-sprites.cjs             # Sprite sheet generator for desktop pet
 ├── package.json
 └── vite.config.ts
 ```
@@ -162,6 +185,7 @@ code-light/
 - **Backend:** [Tauri v2](https://v2.tauri.app/) + Rust
 - **Frontend:** Vite + TypeScript (minimal — the app has no visible window)
 - **Hooks:** Bash scripts registered as lifecycle hooks
+- **Desktop Pet:** Pixel art sprite sheets generated with Node.js canvas
 
 ## License
 
