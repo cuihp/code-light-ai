@@ -82,15 +82,6 @@ fn now_secs() -> u64 {
         .as_secs()
 }
 
-fn load_png(path: &std::path::Path) -> Image<'static> {
-    let data = fs::read(path).unwrap_or_else(|e| panic!("Failed to load {}: {}", path.display(), e));
-    let img = image::load_from_memory(&data)
-        .unwrap_or_else(|e| panic!("Failed to decode {}: {}", path.display(), e));
-    let rgba = img.to_rgba8();
-    let (w, h) = (rgba.width(), rgba.height());
-    Image::new_owned(rgba.into_raw(), w, h)
-}
-
 fn make_empty_icon() -> Image<'static> {
     let size = 64u32;
     let rgba = vec![0u8; (size * size * 4) as usize];
@@ -98,17 +89,20 @@ fn make_empty_icon() -> Image<'static> {
 }
 
 fn build_icons() -> HashMap<String, Image<'static>> {
-    let icon_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("icons/status");
-    let color_map = [
-        ("idle", "gray.png"),
-        ("working", "green.png"),
-        ("waiting", "yellow.png"),
-        ("error", "red.png"),
-        ("completed", "blue.png"),
+    let color_map: &[(&str, &[u8])] = &[
+        ("idle", include_bytes!("../icons/status/gray.png")),
+        ("working", include_bytes!("../icons/status/green.png")),
+        ("waiting", include_bytes!("../icons/status/yellow.png")),
+        ("error", include_bytes!("../icons/status/red.png")),
+        ("completed", include_bytes!("../icons/status/blue.png")),
     ];
     let mut map = HashMap::new();
-    for (key, file) in color_map {
-        map.insert(key.to_string(), load_png(&icon_dir.join(file)));
+    for (key, data) in color_map {
+        let img = image::load_from_memory(data)
+            .unwrap_or_else(|e| panic!("Failed to decode embedded icon '{}': {}", key, e));
+        let rgba = img.to_rgba8();
+        let (w, h) = (rgba.width(), rgba.height());
+        map.insert(key.to_string(), Image::new_owned(rgba.into_raw(), w, h));
     }
     map.insert("off".to_string(), make_empty_icon());
     map
